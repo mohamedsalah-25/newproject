@@ -5,7 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\product;
 use App\Models\ProductGallary;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use App\Mail\UserNotificationMail;
+use Illuminate\Support\Facades\Mail;
 
 
 class AdminController extends Controller
@@ -81,10 +84,7 @@ class AdminController extends Controller
   // return redirect()->route('products.show', $product->id);
 
   }
-  public function show(){
-       $product = product::all();
-    return view('home.fru',['product' => $product ]);
-}
+
 public function showGallary($id)
 {
     $product = Product::with('images')->findOrFail($id);
@@ -93,16 +93,6 @@ public function showGallary($id)
 
   ]);
 }
-public function search(request $request)
-    {
-        $search = $request->input('search');
-        $product = product::where('product_name', 'like', "%$search%")
-            ->orWhere('description', 'like', "%$search%")
-            ->orWhere('cat', 'like', "%$search%")
-            ->get();
-
-        return view('home.search', ['product' => $product]);
-    }
     public function deleteProduct($id)
     {
         $product = product::paginate(3);
@@ -111,4 +101,15 @@ public function search(request $request)
         //return redirect()->back();
         return view('home.fru',['product' => $product ]);
     }
+
+    public function sendEmail(){
+
+    $user = Auth::user();
+    $data = [
+        'name' => $user->name,
+        'message' => 'your order is confirmed we will be in touch with you as soon as possible',
+    ];
+
+    Mail::to($user->email)->send(new UserNotificationMail($data));
+}
 }

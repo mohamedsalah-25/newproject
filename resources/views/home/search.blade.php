@@ -26,7 +26,7 @@
   </div>
 </div>
 @else
-<div class="alert alert-danger">
+<div style="text-align:center;" class="alert alert-danger">
 <h3>Product do not found</h3>
 </div>
 

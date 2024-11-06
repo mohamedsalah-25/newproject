@@ -1,7 +1,6 @@
 <!-- header -->
 @include('home.header')
 <!-- end header -->
-
 <!-- cart -->
 <div class="cart-section mt-150 mb-150">
   <div class="container">
@@ -22,6 +21,7 @@
             <tbody>
               @php
                   $grandTotal = 0; // Initialize the grand total variable
+
               @endphp
           @if(isset($cart))
           @foreach($cart as $item)
@@ -49,7 +49,6 @@
           </table>
         </div>
       </div>
-
       <div class="col-lg-4">
         <div class="total-section">
           <table class="total-table">
@@ -64,14 +63,27 @@
                 <td><strong>Subtotal: </strong></td>
                 <td>{{ $grandTotal}} $</td>
               </tr>
+              @if(auth()->user()->usertype === 0)
               <tr class="total-data">
                 <td><strong>Shipping: </strong></td>
-                <td>{{$shipping = 45}} $</td>
+                <td>{{$shipping->shipping}} $</td>
               </tr>
+              @else
+                <td><strong>Shipping: </strong></td>
+              <td class="product-quantity">
+                <form method="POST" action="{{ route('edit_shipping') }}">
+                  @csrf
+                  @method('patch')
+                  <input type="hidden" name="id" value="{{ $shipping->id ?? ''}}">
+                  <input type="number" name="shipping" value="{{ $shipping->shipping ?? '0' }}" >
+                  <input type="submit"  value="edit" class="boxed-btn" >
+                </form>
+              </td>
+              @endif
               <tr class="total-data">
                 <td><strong>Total: </strong></td>
                 @if(($grandTotal > 0))
-                <td>{{$grandTotal + $shipping}} $</td>
+                <td>{{$grandTotal + $shipping->shipping}} $</td>
                 @else
                 <td>0</td>
                 @endif
@@ -80,9 +92,8 @@
           </table>
         </div>
         @if(isset($item))
-        <form method="post" action="{{ url('myorder', ['id' => $item->id]) }}">
+        <form method="post" action="{{ route('order.remove', ['id' => $item->id]) }}">
               @csrf
-
               <p class="pt-5"><input type="submit" value="Confirm Order"></p>
             </form>
             @endif
@@ -90,10 +101,7 @@
         </div>
       </div>
     </div>
-  </div>
-</div>
 <!-- end cart -->
-
 <!-- hero area -->
 @include('home.footer')
 <!-- end hero area -->

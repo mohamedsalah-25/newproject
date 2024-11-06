@@ -5,8 +5,12 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\product;
 use App\Models\Cart;
+use App\Models\Shipping;
 use App\Models\myOrder;
 use Illuminate\Support\Facades\Auth;
+use App\Mail\UserNotificationMail;
+use Illuminate\Support\Facades\Mail;
+
 
 class HomeController extends Controller
 {
@@ -40,7 +44,10 @@ class HomeController extends Controller
         return view('home.fru',['product' => $product ]);
     }
   }
-
+  public function show(){
+       $product = product::all();
+    return view('home.fru',['product' => $product ]);
+}
     public function allproduct()
     {
         $product = product::simplePaginate(9);
@@ -113,11 +120,13 @@ class HomeController extends Controller
         }else{  return redirect('login');
         }
     }
-public function showcart()
+public function showcart(Request $request)
 {
     $user =auth()->user();
     $cart = Cart::where('phone',$user->phone)->get();
-    return view('home.cart',['cart' => $cart ]);
+  //  $shipping = Shipping::where('id', 1)->value('shipping');
+    $shipping = Shipping::find(1);
+    return view('home.cart',['cart' => $cart, 'shipping'=> $shipping]);
 }
 public function deletecart($id)
 {
@@ -125,6 +134,8 @@ public function deletecart($id)
     $data->delete();
     return redirect()->back();
 }
+
+
 public function edit_quantity($id, Request $request)
     {
         // Validate the input
@@ -142,7 +153,24 @@ public function edit_quantity($id, Request $request)
         // Redirect back to the cart page or wherever needed
         return redirect()->back();
     }
-    public function remove_username( Request $request ,$phone)
+    public function edit_shipping( Request $request){
+                    // Validate the input
+            $request->validate([
+              'shipping' => 'numeric', // Add any other validation rules you need
+              ]);
+              // Find the item in the cart
+            $shipping = Shipping::find($request->id);
+              if ($shipping) {
+              $shipping->shipping  =  $request->input('shipping');
+              // Update the quantity
+              $shipping->save();
+                  return redirect()->back()->with('shipping', $shipping->shipping);
+            }else{
+              // Redirect back to the cart page or wherever needed
+                return redirect()->back();
+          }
+}
+    public function remove_order( Request $request ,$id)
     {
        $cartItems = Cart::all();
 
@@ -168,9 +196,17 @@ public function edit_quantity($id, Request $request)
 
 }
 public function myorder(){
+
   $user =auth()->user();
   $myorder = myOrder::where('phone',$user->phone)->get();
+  $data = [
+      'name' => $user->name,
+      'message' => 'your order is confirmed we will be in touch with you as soon as possible',
+  ];
+  Mail::to($user->email)->send(new UserNotificationMail($data));
   return view('home.myOrder',['myorder' => $myorder ])->with('message', 'Your product is Ordered successfully');
+
+
 }
 
 
@@ -185,6 +221,17 @@ public function about()
 {
     return view('home.about');
 }
+
+public function search(request $request)
+    {
+        $search = $request->input('search');
+        $product = product::where('product_name', 'like', "%$search%")
+            ->orWhere('description', 'like', "%$search%")
+            ->orWhere('cat', 'like', "%$search%")
+            ->get();
+
+        return view('home.search', compact('product'));
+    }
 /*
 public function show_single_product($productId){
   $product = product::where('id',$productId)->get();

@@ -57,12 +57,15 @@
 						<!-- menu start -->
 						<nav class="main-menu">
 							<ul>
-                                <li>
-									<div class="header-icons">
-										<a  class="mobile-hide search-bar-icon"><i class="fas fa-search"></i></a>
-									</div>
-								</li>
-								<li class="current-list-item"><a href="{{url('index')}}">Home</a>
+                <li>
+                  <div class="header-icons">
+                    <a class="mobile-hide search-bar-icon" ><i class="fas fa-search"></i></a>
+                  </div>
+                </li>
+
+
+            <li class="current-list-item"><a href="{{url('index')}}">Home</a>
+
                   @if(auth()->check())
                   @if(auth()->user()->usertype === 1)
 									<ul class="sub-menu">
@@ -92,13 +95,14 @@
               <li style="float:right" class="current-list-item"><a href="{{ route('profile') }}">Welcome {{auth()->user()->name}}</a>
               <ul class="sub-menu">
                 <form method="POST">
+                    @csrf
                 <li><a href="{{ url('showcart') }}">My Cart</a></li>
                   <li><a href="{{ url('myorder') }}">My Orders</a></li>
                   @if(auth()->user()->usertype === 1)
-                      @csrf
                   <li><a href="{{url('add_product')}}">Add Products</a></li>
+                    @endif
               </form>
-                  @endif
+
               </ul>
               </li>
               @endif
@@ -113,7 +117,7 @@
 		</div>
 	</div>
   <!-- search area -->
-	<div class="search-area">
+  <div class="search-area">
 		<div class="container">
 			<div class="row">
 				<div class="col-lg-12">
@@ -122,6 +126,7 @@
 						<div class="search-bar-tablecell">
 							<h3>Search For:</h3>
                 <form action="{{ route('products.search')}}" method="GET">
+                  @csrf
 							<input type="text" name="search" placeholder="Search ">
 							<button type="submit">Search <i class="fas fa-search"></i></button>
               </form>

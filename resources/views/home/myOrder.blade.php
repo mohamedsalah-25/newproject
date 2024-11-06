@@ -1,14 +1,12 @@
 <!-- header -->
 @include('home.header')
 <!-- end header -->
-
-
-<div class="col-lg-5">
+<div class=" mt-100 mb-100">
   <div class="order-details-wrap">
-    <table class="order-details">
-      <thead>
+    <table style="margin: 0 auto;" class="order-details">
+      <thead >
         <tr>
-          <th style="background-color: #F28123;">Your order Details</th>
+          <th colspan="3" style="text-align: center; background-color: #F28123">Your order Details</th>
           @if(session($message))
               <div class="alert alert-success">
                   {{ session('message') }}
@@ -25,7 +23,7 @@
         @php
             $grandTotal = 0; // Initialize the grand total variable
         @endphp
-        <form class="" action="{{ url('myorder') }}" enctype="multipart/form-data" method="get" >
+        <form action="{{ url('myorder') }}" enctype="multipart/form-data" method="get" >
           @csrf
         @if(isset($myorder))
           @foreach($myorder as $item)
@@ -38,24 +36,9 @@
         @endif
         <form>
       </tbody>
-      <tbody>
-        <tr>
-          <td style="background-color: #F28123;"><strong></strong></td>
-
-
-        </tr>
-      </tbody>
     </table>
   </div>
 </div>
-</div>
-</div>
-</div>
-
-
-
-
-
 <!-- hero area -->
 @include('home.footer')
 <!-- end hero area -->

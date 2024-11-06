@@ -1,0 +1,15 @@
+Open any local server (xampp/wamp)
+Start [Apache]
+Start [MySQL]
+Start [PHP]
+ 
+Go to CMD on your pc 
+go inside the file 
+Write : php artisan serve 
+GO to any Browser 
+and write the server that appear 
+
+Enjoy our website 
+
+               OPPA
+(Online Priceless Products Anytime)
